@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import css from "./AuthNavigation.module.css";
+import css from "./AuthProvider.module.css";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useRouter } from "next/navigation";
 
 import { logout } from "@/lib/api/clientApi";
 
-export default function AuthNavigation() {
+export default function AuthProvider() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
