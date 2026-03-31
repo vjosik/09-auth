@@ -4,28 +4,7 @@ import Image from "next/image";
 import css from "./ProfilePage.module.css";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/store/authStore";
-import { Metadata } from "next";
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: "NotesHub User Profile",
-    description: "Your personal profile page on NotesHub App",
-    openGraph: {
-      title: "Your NotesHub Profile",
-      description: "View and edit your profile information on NotesHub App",
-      url: "https://noteshub-app.vercel.app/",
-      siteName: "NotesHub App",
-      images: [
-        {
-          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
-          width: 1200,
-          height: 630,
-          alt: "NotesHub User Profile Open Graph Image",
-        },
-      ],
-    },
-  };
-}
 
 export default function ProfilePage() {
   const { email, username } = useAuthStore((s) => s.user) || {};
