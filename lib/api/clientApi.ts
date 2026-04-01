@@ -3,18 +3,20 @@ import { nextServer } from "./api";
 import { AxiosResponse } from "axios";
 import { User } from "@/types/user";
 
+export const ENDPOINT = "/notes";
+
 interface CreateNoteBody {
   title: string;
   content: string;
   tag: string;
 }
 
-interface FetchNotesResponse {
+export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
 
-interface FetchNotesParams {
+export interface FetchNotesParams {
   search?: string;
   tag?: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
   page?: number;
@@ -49,19 +51,26 @@ export async function fetchNotes(params?: FetchNotesParams, tag?: string) {
 
 //Function to fetch a single note by its ID
 export async function fetchNoteById(id: Note["id"]) {
-  const { data }: AxiosResponse<Note> = await nextServer.get(`/notes/${id}`);
+  const { data }: AxiosResponse<Note> = await nextServer.get(
+    `${ENDPOINT}/${id}`,
+  );
   return data;
 }
 
 //Function to create a new note
 export async function createNote(body: CreateNoteBody) {
-  const { data }: AxiosResponse<Note> = await nextServer.post("/notes", body);
+  const { data }: AxiosResponse<Note> = await nextServer.post(
+    `${ENDPOINT}`,
+    body,
+  );
   return data;
 }
 
 //Function to delete a note by its ID
 export async function deleteNote(id: Note["id"]) {
-  const { data }: AxiosResponse<Note> = await nextServer.delete(`/notes/${id}`);
+  const { data }: AxiosResponse<Note> = await nextServer.delete(
+    `${ENDPOINT}/${id}`,
+  );
   return data;
 }
 

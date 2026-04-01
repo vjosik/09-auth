@@ -1,14 +1,32 @@
-"use client";
-
-import Image from "next/image";
-import css from "./ProfilePage.module.css";
 import Link from "next/link";
-import { useAuthStore } from "@/lib/store/authStore";
+import css from "./ProfilePage.module.css";
+import Image from "next/image";
+import { Metadata } from "next";
+import { getMe } from "@/lib/api/serverApi";
 
 
-export default function ProfilePage() {
-  const { email, username } = useAuthStore((s) => s.user) || {};
 
+export const metadata: Metadata = {
+  title: "NoteHub: Profile Page",
+  description: "View and manage your profile in NoteHub",
+  openGraph: {
+    title: "NoteHub: Profile Page",
+    description: "View and manage your profile in NoteHub",
+    url: "https://08-zustand-sage-nine.vercel.app/profile",
+    siteName: "NoteHub",
+    images: [
+      {
+        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+        width: 1200,
+        height: 630,
+        alt: "NoteHub app",
+      },
+    ],
+  },
+};
+
+export default async function Profile() {
+  const user = await getMe();
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
@@ -20,7 +38,7 @@ export default function ProfilePage() {
         </div>
         <div className={css.avatarWrapper}>
           <Image
-            src=""
+            src={user.avatar || "/default-avatar.png"}
             alt="User Avatar"
             width={120}
             height={120}
@@ -28,8 +46,8 @@ export default function ProfilePage() {
           />
         </div>
         <div className={css.profileInfo}>
-          <p>Username: {username}</p>
-          <p>Email: {email}</p>
+          <p>Username: {user.username}</p>
+          <p>Email: {user.email}</p>
         </div>
       </div>
     </main>

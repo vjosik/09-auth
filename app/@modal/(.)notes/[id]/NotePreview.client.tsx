@@ -18,10 +18,6 @@ export default function NotePreview() {
     refetchOnMount: false,
   });
 
-  if (isLoading) return <p>Loading, please wait...</p>;
-
-  if (error || !data) return <p>Something went wrong.</p>;
-
   return (
     <Modal onClose={close}>
       {isLoading && <p>Loading, please wait...</p>}
