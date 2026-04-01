@@ -1,68 +1,47 @@
 "use client";
 
-import Link from "next/link";
-import css from "./AuthProvider.module.css";
-import { useAuthStore } from "@/lib/store/authStore";
-import { useRouter } from "next/navigation";
+import { checkSession, getMe } from "@/lib/api/clientApi";
+import { useAuthStore } from "../../lib/store/authStore";
+import { useEffect, useState } from "react";
 
-import { logout } from "@/lib/api/clientApi";
+type Props = {
+  children: React.ReactNode;
+};
 
-export default function AuthProvider() {
-  const router = useRouter();
-  const user = useAuthStore((s) => s.user);
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const clearUser = useAuthStore((s) => s.clearIsAuthenticated);
-
-  const handleLogout = async () => {
-    await logout();
-    clearUser();
-    router.push("/");
-  };
-
-  return (
-    <>
-      {isAuthenticated ? (
-        <>
-          <li className={css.navigationItem}>
-            <Link
-              href="/profile"
-              prefetch={false}
-              className={css.navigationLink}
-            >
-              Profile
-            </Link>
-          </li>
-
-          <li className={css.navigationItem}>
-            <p className={css.userEmail}>{user?.username ?? user?.email}</p>
-            <button onClick={handleLogout} className={css.logoutButton}>
-              Logout
-            </button>
-          </li>
-        </>
-      ) : (
-        <>
-          <li className={css.navigationItem}>
-            <Link
-              href="/sign-in"
-              prefetch={false}
-              className={css.navigationLink}
-            >
-              Login
-            </Link>
-          </li>
-
-          <li className={css.navigationItem}>
-            <Link
-              href="/sign-up"
-              prefetch={false}
-              className={css.navigationLink}
-            >
-              Sign up
-            </Link>
-          </li>
-        </>
-      )}
-    </>
+export default function AuthProvider({ children }: Props) {
+  const setUser = useAuthStore((state) => state.setUser);
+  const clearIsAuthenticated = useAuthStore(
+    (state) => state.clearIsAuthenticated,
   );
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      setIsLoading(true);
+
+      try {
+        const isAuthenticated = await checkSession();
+
+        if (isAuthenticated) {
+          const user = await getMe();
+          if (user) setUser(user);
+        } else {
+          clearIsAuthenticated();
+        }
+      } catch {
+        clearIsAuthenticated();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [setUser, clearIsAuthenticated]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  return children;
 }
